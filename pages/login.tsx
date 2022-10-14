@@ -1,7 +1,21 @@
 import React, {useState, useEffect, FormEvent} from 'react'
-import { Typography, Container, CssBaseline,Box,TextField, Checkbox, Button, FormControlLabel } from '@mui/material';
+import { Typography, Container, CssBaseline,Box,TextField, Checkbox, Button, FormControlLabel,Stack,Snackbar } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import Link from 'next/link';
+
+
+
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+    props,
+    ref,
+  ) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+  });
+
+  
+
+
 type CopyProps = {
     site: string;
     sx?:object;
@@ -32,7 +46,7 @@ const [error,setError] = useState<boolean>(false);
 const [errorMessage,setErrorMessage] = useState<string>('');
 const [email,setEmail] = useState<string | undefined | null | FormDataEntryValue>('');
 const [password,setPassword] = useState<string | undefined | null | FormDataEntryValue>('');
-
+const [open, setOpen] = useState<boolean>(false);
 
 // A primeira vez após carregar a página e após o render
 // Executa também a cada alteração de estado
@@ -59,15 +73,19 @@ useEffect(()=>{
     if(password && password.length < 6 ){
         setError(true);
         setErrorMessage('A senha deve ter no mínimo 6 caracteres');
-    }else{
+    }else if(password) {
         setError(false);
         setErrorMessage('');
         // Enviar o form para o servidor
         // Deu certo... Vamos Criar o snackbar
+        setOpen(true);
 
     }    
-
 },[password])
+
+const handleClose = () => {
+    setOpen(false);  
+}
 
 const handleSubmit = (event: FormEvent<HTMLFormElement>)=>{
     // Previne o comportamento padrão do formulário, que seria recarregar a página.
@@ -91,6 +109,11 @@ const handleSubmit = (event: FormEvent<HTMLFormElement>)=>{
     <ThemeProvider theme={theme}>
         <Container component="main" maxWidth="xs">
             <CssBaseline />
+            <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>
+            <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+          Usuário autenticado com sucesso! Aguarde...
+            </Alert>
+            </Snackbar>
              <Box sx={{mt:8, display: 'flex',flexDirection: 'column', alignItems: 'center'}}>
                 <Typography component="h1" variant="h5">
                     Login
