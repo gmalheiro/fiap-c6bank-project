@@ -28,10 +28,10 @@ export default function LoginPage() {
 const [empresa, setEmpresa] = useState<string>('');
 const [nome, setNome] = useState('');
 const [contador, setContador] = useState<number>(5);
-const [error,setError] = useState<string>('');
+const [error,setError] = useState<boolean>(false);
 const [errorMessage,setErrorMessage] = useState<string>('');
-const [email,setEmail] = useState<string>('');
-const [password,setPassword] = useState<string>('');
+const [email,setEmail] = useState<string | undefined | null | FormDataEntryValue>('');
+const [password,setPassword] = useState<string | undefined | null | FormDataEntryValue>('');
 
 
 // A primeira vez após carregar a página e após o render
@@ -54,13 +54,33 @@ useEffect(()=>{
 },[nome])
 
 
+useEffect(()=>{
+
+    if(password && password.length < 6 ){
+        setError(true);
+        setErrorMessage('A senha deve ter no mínimo 6 caracteres');
+    }else{
+        setError(false);
+        setErrorMessage('');
+        // Enviar o form para o servidor
+        // Deu certo... Vamos Criar o snackbar
+
+    }    
+
+},[password])
+
 const handleSubmit = (event: FormEvent<HTMLFormElement>)=>{
     // Previne o comportamento padrão do formulário, que seria recarregar a página.
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
+    
     console.log(data.get('email'));
     console.log(data.get('password'));
+
+    setEmail(data.get('email'));
+    setPassword(data.get('password'));
+
 }
 
 
@@ -85,6 +105,9 @@ const handleSubmit = (event: FormEvent<HTMLFormElement>)=>{
     <TextField margin="normal"  required fullWidth id="password" type="password" label="Digite a senha" name="password" autoComplete="current-password" autoFocus/>
                     <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Lembrar de mim" />
                     <Button type="submit" fullWidth variant="contained" sx={{mt:3, mb:2}}>Entrar</Button>
+
+                    {error && <Typography color="error">{errorMessage}</Typography>}
+
                 </Box>
              </Box>
             <Copyright site="www.avanade.com.br" sx={{mt:8, mb: 4}} />
