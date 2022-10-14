@@ -28,6 +28,11 @@ export default function LoginPage() {
 const [empresa, setEmpresa] = useState<string>('');
 const [nome, setNome] = useState('');
 const [contador, setContador] = useState<number>(5);
+const [error,setError] = useState<string>('');
+const [errorMessage,setErrorMessage] = useState<string>('');
+const [email,setEmail] = useState<string>('');
+const [password,setPassword] = useState<string>('');
+
 
 // A primeira vez após carregar a página e após o render
 // Executa também a cada alteração de estado
